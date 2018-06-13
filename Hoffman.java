@@ -87,13 +87,13 @@ class HoffmanEncoderStruc //heap node class
    public HoffmanEncoderStruc clone(){ return new HoffmanEncoderStruc(aCode,bCode, cCode, dCode, eCode, fCode, gCode); }
 // -------------------------------------------------------------
    public String toString(){
-      return "\nA:" + aCode + " \n" +
-             "B:" + bCode + " \n" +
-             "C:" + cCode + " \n" +
-             "D:" + dCode + " \n" +
-             "E:" + eCode + " \n" +
-             "F:" + fCode + " \n" +
-             "G:" + gCode + " \n";
+      return "\nA: " + aCode + " \n" +
+             "B: " + bCode + " \n" +
+             "C: " + cCode + " \n" +
+             "D: " + dCode + " \n" +
+             "E: " + eCode + " \n" +
+             "F: " + fCode + " \n" +
+             "G: " + gCode + " \n";
    }
 // -------------------------------------------------------------
    }  // end class Node
@@ -290,16 +290,16 @@ class Tree
    public Node hoffmanParent(Node firstChild, Node secondChild){
     Node nodeParent = new Node((firstChild.iData + secondChild.iData), '-');
     if(firstChild.iData < secondChild.iData){
-        firstChild.pathDirection = 0;
+        firstChild.pathDirection = '0';
         nodeParent.leftChild = firstChild;
-        secondChild.pathDirection = 1;
+        secondChild.pathDirection = '1';
         nodeParent.rightChild = secondChild;
         firstChild.rootParent = nodeParent;
         secondChild.rootParent = nodeParent;
     } else{
-        firstChild.pathDirection = 1;
+        firstChild.pathDirection = '1';
         nodeParent.rightChild = firstChild;
-        secondChild.pathDirection = 0;
+        secondChild.pathDirection = '0';
         nodeParent.leftChild = secondChild;
         firstChild.rootParent = nodeParent;
         secondChild.rootParent = nodeParent;
@@ -497,14 +497,14 @@ class Tree
 // -------------------------------------------------------------
    private void determineHoffmanCode(Node localRoot)
    {
-      char hoffmanHost = localRoot.cData;
+      char hoffmanChar = localRoot.cData;
       String hoffPath = "";
       while(localRoot.rootParent != null){
-         hoffPath = Character.toString(hoffmanHost) + hoffPath;
+         hoffPath = Character.toString(localRoot.pathDirection) + hoffPath;
          localRoot = localRoot.rootParent;
       }
 
-      switch(hoffmanHost){
+      switch(hoffmanChar){
             case 'A':
                   hoffmanCodes.setACode(hoffPath); break;
             case 'B':
@@ -521,6 +521,36 @@ class Tree
                   hoffmanCodes.setGCode(hoffPath); break;
       }
    }     
+// -------------------------------------------------------------
+public String decodeHoffmanString(String hoffmanString){
+   StringBuffer hoffDecoded = new StringBuffer();
+   Node pathDecoder = root;
+   String parser = "";
+   Scanner reader = new Scanner(hoffmanString);
+   reader.useDelimiter("");
+
+   while (reader.hasNext()) {
+      parser = reader.next();
+      switch(parser){
+            case "0": if(pathDecoder.leftChild.cData != '-'){
+                        hoffDecoded.append(pathDecoder.leftChild.cData);
+                        pathDecoder = root;
+                      } else{
+                        pathDecoder = pathDecoder.leftChild;
+                      }
+                      break;
+            case "1": if(pathDecoder.rightChild.cData != '-'){
+                        hoffDecoded.append(pathDecoder.rightChild.cData);
+                        pathDecoder = root;
+                      } else{
+                        pathDecoder = pathDecoder.rightChild;
+                      }
+                      break;
+      }
+   }
+   reader.close();
+   return hoffDecoded.toString();
+}     
 // -------------------------------------------------------------
    public void displayTree()
       {
@@ -574,10 +604,9 @@ class Tree
 ////////////////////////////////////////////////////////////////
 
 
-public class Hoffman {
+public class n00624794 {
 
-      public static void main(String[] args) throws IOException
-      {
+      public static void main(String[] args) throws IOException{
          //Tree theTree = new Tree();
          Heap priorityQueue = new Heap(8);
          priorityQueue.insert(4,'C');
@@ -596,75 +625,91 @@ public class Hoffman {
 
          Tree hoffman = new Tree().hoffmanTree(priorityQueue);
          hoffman.displayTree();
-      }
+         hoffman.hoffmanCodeGenerator();
+         System.out.print(hoffman.getHoffmanCodes());
 
-      // theTree.insert(160, '-');
-      // theTree.insert(60, '-');
-      // theTree.insert(161, 'E');
-      // theTree.insert(25, 'F');
-      // theTree.insert(95, '-');
-      // theTree.insert(70, 'A');
-      // theTree.insert(110, '-');
-      // theTree.insert(105, '-');
-      // theTree.insert(115, 'B');
 
-      // //theTree.insert(75, 'c');
-      // //theTree.insert(50, 'a');
-      // //theTree.insert(43, 'f');
-      // //theTree.insert(37, 'e');
-      // //theTree.insert(30, 'g');
-      // //theTree.insert(25, 'b');
-      // //theTree.insert(12, 'd');
+         File file = new File("abc.txt");
+         StringBuffer stringAtoG = new StringBuffer();
+         String finalHoffmanAtoG = ""; // swap stringAtoG to regular string.
+         StringBuffer finalHoffmanEncodedAtoG = new StringBuffer();
+         Scanner reader;
+         String parser;
+         int[] hoffmanCharCount = {0,0,0,0,0,0,0};
+         HoffmanEncoderStruc encodingParser = hoffman.getHoffmanCodes();
+         try {
+            reader = new Scanner(file);
+            reader.useDelimiter("");
+            while (reader.hasNext()) {
+                  parser = reader.next();
+                  switch(parser){
+                        case "A": hoffmanCharCount[0] +=1;
+                                  stringAtoG.append(parser); break;
+                        case "B": hoffmanCharCount[1] +=1;
+                                  stringAtoG.append(parser); break;
+                        case "C": hoffmanCharCount[2] +=1;
+                                  stringAtoG.append(parser); break;
+                        case "D": hoffmanCharCount[3] +=1;
+                                  stringAtoG.append(parser); break;
+                        case "E": hoffmanCharCount[4] +=1;
+                                  stringAtoG.append(parser); break;
+                        case "F": hoffmanCharCount[5] +=1;
+                                  stringAtoG.append(parser); break;
+                        case "G": hoffmanCharCount[6] +=1;
+                                  stringAtoG.append(parser); break;
+                  }
+            }
+            finalHoffmanAtoG = stringAtoG.toString();
+            System.out.println(finalHoffmanAtoG);
+            System.out.println("A:" + hoffmanCharCount[0] + " B:" + hoffmanCharCount[1] +" C:"+ hoffmanCharCount[2] + " D:" + hoffmanCharCount[3] + " E:" + hoffmanCharCount[4] + " F:" + hoffmanCharCount[5] + " G:" + hoffmanCharCount[6]);
+            
+         } 
+         catch (FileNotFoundException e) {
+            e.printStackTrace();
+         }
 
-      // while(true)
-      //    {
-      //    System.out.print("Enter first letter of show, ");
-      //    System.out.print("insert, find, delete, or traverse: ");
-      //    int choice = getChar();
-      //    switch(choice)
-      //       {
-      //       case 's':
-      //          theTree.displayTree();
-      //          break;
-      //       case 'i':
-      //          System.out.print("Enter value to insert: ");
-      //          value = getInt();
-      //          theTree.insert(value, 'a');
-      //          break;
-      //       case 'f':
-      //          System.out.print("Enter value to find: ");
-      //          value = getInt();
-      //          Node found = theTree.find(value);
-      //          if(found != null)
-      //             {
-      //             System.out.print("Found: ");
-      //             found.displayNode();
-      //             System.out.print("\n");
-      //             }
-      //          else
-      //             System.out.print("Could not find ");
-      //             System.out.print(value + '\n');
-      //          break;
-      //       case 'd':
-      //          System.out.print("Enter value to delete: ");
-      //          value = getInt();
-      //          boolean didDelete = theTree.delete(value);
-      //          if(didDelete)
-      //             System.out.print("Deleted " + value + '\n');
-      //          else
-      //             System.out.print("Could not delete ");
-      //             System.out.print(value + '\n');
-      //          break;
-      //       case 't':
-      //          System.out.print("Enter type 1, 2 or 3: ");
-      //          value = getInt();
-      //          theTree.traverse(value);
-      //          break;
-      //       default:
-      //          System.out.print("Invalid entry\n");
-      //       }  // end switch
-      //    }  // end while
-      // }  // end main()
+         System.out.println(finalHoffmanEncodedAtoG.toString());
+
+         priorityQueue = new Heap(8);
+         priorityQueue.insert(hoffmanCharCount[0],'A');
+         priorityQueue.insert(hoffmanCharCount[1],'B');
+         priorityQueue.insert(hoffmanCharCount[2],'C');
+         priorityQueue.insert(hoffmanCharCount[3],'D');
+         priorityQueue.insert(hoffmanCharCount[4],'E');
+         priorityQueue.insert(hoffmanCharCount[5],'F');
+         priorityQueue.insert(hoffmanCharCount[6],'G');
+         priorityQueue.displayHeap();
+
+         hoffman = new Tree();
+         hoffman = hoffman.hoffmanTree(priorityQueue);
+         hoffman.displayTree();
+         hoffman.hoffmanCodeGenerator();
+         encodingParser = hoffman.getHoffmanCodes();
+         System.out.print(encodingParser);
+
+         reader = new Scanner(finalHoffmanAtoG);
+         reader.useDelimiter("");
+         finalHoffmanEncodedAtoG = new StringBuffer();
+         while (reader.hasNext()) {
+            parser = reader.next();
+            switch(parser){
+                  case "A": finalHoffmanEncodedAtoG.append(encodingParser.getACode()); break;
+                  case "B": finalHoffmanEncodedAtoG.append(encodingParser.getBCode()); break;
+                  case "C": finalHoffmanEncodedAtoG.append(encodingParser.getCCode()); break;
+                  case "D": finalHoffmanEncodedAtoG.append(encodingParser.getDCode()); break;
+                  case "E": finalHoffmanEncodedAtoG.append(encodingParser.getECode()); break;
+                  case "F": finalHoffmanEncodedAtoG.append(encodingParser.getFCode()); break;
+                  case "G": finalHoffmanEncodedAtoG.append(encodingParser.getGCode()); break;
+            }
+         }
+         System.out.println(finalHoffmanEncodedAtoG.toString());
+
+         String decodedHoffmanEncoding = hoffman.decodeHoffmanString(finalHoffmanEncodedAtoG.toString());
+         System.out.println(decodedHoffmanEncoding);
+         if(reader != null){
+            reader.close();
+         }
+      }// end main()
 // -------------------------------------------------------------
    public static String getString() throws IOException
       {
@@ -686,4 +731,5 @@ public class Hoffman {
       return Integer.parseInt(s);
       }
 // -------------------------------------------------------------
+
 }
