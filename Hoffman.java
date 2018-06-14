@@ -12,7 +12,6 @@
 // - Goals C: Show the encoded A-G portion of a file
 // - Goals D: Retract A-G encoded string to recreate A-G order
 ////////////////////////////////////////////////////////////////
-
 import java.io.*;
 import java.util.*;// for Stack class
 ////////////////////////////////////////////////////////////////
@@ -33,8 +32,8 @@ class Node //heap node class
    public Node rootParent;        // this node's parent
 
 // -------------------------------------------------------------
-   public Node(int key, char letter)           // constructor
-      { iData = key; cData = letter; }
+   public Node(int key, char letter)           // constructor   
+      { iData = key; cData = letter; }                          
 // -------------------------------------------------------------
    public Node getKey()
       { return this; }
@@ -663,23 +662,23 @@ public class n00624794 {
             reader = new Scanner(file);
             reader.useDelimiter("");
             while (reader.hasNext()) {
-                  parser = reader.next();
-                  switch(parser){
-                        case "A": hoffmanCharCount[0] +=1;
-                                  stringAtoG.append(parser); break;
-                        case "B": hoffmanCharCount[1] +=1;
-                                  stringAtoG.append(parser); break;
-                        case "C": hoffmanCharCount[2] +=1;
-                                  stringAtoG.append(parser); break;
-                        case "D": hoffmanCharCount[3] +=1;
-                                  stringAtoG.append(parser); break;
-                        case "E": hoffmanCharCount[4] +=1;
-                                  stringAtoG.append(parser); break;
-                        case "F": hoffmanCharCount[5] +=1;
-                                  stringAtoG.append(parser); break;
-                        case "G": hoffmanCharCount[6] +=1;
-                                  stringAtoG.append(parser); break;
-                  }
+               parser = reader.next();
+               switch(parser){
+                  case "A": hoffmanCharCount[0] +=1;         
+                            stringAtoG.append(parser); break;
+                  case "B": hoffmanCharCount[1] +=1;         
+                            stringAtoG.append(parser); break;
+                  case "C": hoffmanCharCount[2] +=1;         
+                            stringAtoG.append(parser); break;
+                  case "D": hoffmanCharCount[3] +=1;         
+                            stringAtoG.append(parser); break;
+                  case "E": hoffmanCharCount[4] +=1;         
+                            stringAtoG.append(parser); break;
+                  case "F": hoffmanCharCount[5] +=1;         
+                            stringAtoG.append(parser); break;
+                  case "G": hoffmanCharCount[6] +=1;         
+                            stringAtoG.append(parser); break;
+               }
             }
             reader.close();
             finalHoffmanAtoG = stringAtoG.toString();
@@ -723,7 +722,10 @@ public class n00624794 {
                   System.out.print(encodingParser); break;
                case "c":
                   encodingString = hoffman.encodeString(stringAtoG.toString());
-                  System.out.println(encodingString); break;
+                  //System.out.println(encodingString); 
+                  encodingString = encodingPrinter(encodingString);
+                  System.out.println(encodingString);
+                  break;
                case "d":
                   decodedHoffman = hoffman.decodeHoffmanString(encodingString);
                   System.out.println(decodedHoffman); break;
@@ -742,16 +744,18 @@ public class n00624794 {
          reader.useDelimiter("");
          while(reader.hasNext()){
             counter++;
-            parser = reader.Next();
+            parser = reader.next();
             encodingFormat.append(parser);
-            if(counter%3 == 0){
-               encodingFormat.append("\n");
-            }
             if(counter%8 == 0){
+               encodingFormat.append(" ");
+            }
+            if(counter%24 == 0){
                encodingFormat.append("\n");
+               counter = 0;
             }
          }
       }
+      return encodingFormat.toString();
    }
 // -------------------------------------------------------------
    public static String getString() throws IOException
@@ -782,5 +786,4 @@ public class n00624794 {
       return s;
       }
 // -------------------------------------------------------------
-
 }
