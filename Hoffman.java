@@ -475,7 +475,8 @@ class Tree
       if(localRoot != null)
          {
          inOrder(localRoot.leftChild);
-         System.out.print(localRoot.iData + " ");
+         System.out.print("(" + localRoot.cData + ": ");
+         System.out.print(localRoot.iData + ") ");
          if(localRoot.cData != '-'){
                determineHoffmanCode(localRoot);
          }
