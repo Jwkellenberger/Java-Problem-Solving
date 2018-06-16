@@ -50,9 +50,9 @@ class Node //heap node class
 // -------------------------------------------------------------
    }  // end class Node
 ////////////////////////////////////////////////////////////////
-class HoffmanEncoderStruc //heap node class
+class HoffmanEncoderStruc // heap node class
    {
-   private String aCode;
+   private String aCode;  // the paths to get to a-g from root
    private String bCode;
    private String cCode;
    private String dCode;
@@ -60,13 +60,13 @@ class HoffmanEncoderStruc //heap node class
    private String fCode;
    private String gCode;
 // -------------------------------------------------------------
-   public HoffmanEncoderStruc(){}                             // empty parameter constructor
+   public HoffmanEncoderStruc(){}           // empty parameter constructor
 // -------------------------------------------------------------
    public HoffmanEncoderStruc(String aCode, String bCode, String cCode, String dCode, String eCode, String fCode, String gCode)           
    { this.aCode = aCode; this.bCode = bCode; this.cCode = cCode; this.dCode = dCode;
      this.eCode = eCode; this.fCode = fCode; this.gCode = gCode;} // full parameter constructor
 // -------------------------------------------------------------
-   public String getACode(){ return aCode;}
+   public String getACode(){ return aCode;} // Getters
    public String getBCode(){ return bCode;}
    public String getCCode(){ return cCode;}
    public String getDCode(){ return dCode;}
@@ -74,7 +74,7 @@ class HoffmanEncoderStruc //heap node class
    public String getFCode(){ return fCode;}
    public String getGCode(){ return gCode;}
 // -------------------------------------------------------------
-   public void setACode(String code){ aCode = code;}
+   public void setACode(String code){ aCode = code;} // Setters
    public void setBCode(String code){ bCode = code;}
    public void setCCode(String code){ cCode = code;}
    public void setDCode(String code){ dCode = code;}
@@ -84,7 +84,7 @@ class HoffmanEncoderStruc //heap node class
 // -------------------------------------------------------------
    public HoffmanEncoderStruc clone(){ return new HoffmanEncoderStruc(aCode,bCode, cCode, dCode, eCode, fCode, gCode); }
 // -------------------------------------------------------------
-   public String toString(){
+   public String toString(){ // display all A-G paths
       return "\nA: " + aCode + " \n" +
              "B: " + bCode + " \n" +
              "C: " + cCode + " \n" +
@@ -112,7 +112,7 @@ class Heap
    public boolean isEmpty()
       { return currentSize==0; }
 // -------------------------------------------------------------
-   public boolean insert(int key, char letter)
+   public boolean insert(int key, char letter) // min first priority queue
       {
       if(currentSize==maxSize)
          return false;
@@ -159,7 +159,7 @@ class Heap
       int smallerChild;
       Node top = heapArray[index];       // save root
       while(index < currentSize/2)       // while node has at
-         {                               //    least one child,
+         {                               // least one child,
          int leftChild = 2*index+1;
          int rightChild = leftChild+1;
                                          // find larger child
@@ -226,7 +226,7 @@ class Heap
             nBlanks /= 2;                 // half the blanks
             itemsPerRow *= 2;             // twice the items
             column = 0;                   // start over on
-            System.out.println();         //    new row
+            System.out.println();         // new row
             }
          else                             // next item on row
             for(int k=0; k<nBlanks*2-2; k++)
@@ -269,30 +269,30 @@ class Tree
       return current;                    // found it
       }  // end find()
 // -------------------------------------------------------------
-   public Tree hoffmanTree(Heap heap){
+   public Tree hoffmanTree(Heap heap){ // Could be converted to constructor
     Node firstChild = null;
     Node secondChild = null;
-    Node newParent;
+    Node newParent;     
     while(!heap.isEmpty()){
-        firstChild = heap.remove();
-        secondChild = null;
+        firstChild = heap.remove();    // If there persists to being 2 children in priority queue
+        secondChild = null;            // continue to construct a parent node to re-add into queue
         if(!heap.isEmpty()){
             secondChild = heap.remove();
             newParent = hoffmanParent(firstChild, secondChild);
             heap.insert(newParent);
         }
     }
-    return new Tree(firstChild);
+    return new Tree(firstChild);       // The last remaining node becomes the root for the tree
 }
 // -------------------------------------------------------------
    public Node hoffmanParent(Node firstChild, Node secondChild){
     Node nodeParent = new Node((firstChild.iData + secondChild.iData), '-');
-    if(firstChild.iData < secondChild.iData){
-        firstChild.pathDirection = '0';
+    if(firstChild.iData <= secondChild.iData){ // Overly careful check as first child leaving queue
+        firstChild.pathDirection = '0';        // should be the lowest value in the priority queue
         nodeParent.leftChild = firstChild;
-        secondChild.pathDirection = '1';
-        nodeParent.rightChild = secondChild;
-        firstChild.rootParent = nodeParent;
+        secondChild.pathDirection = '1';       // Careful check is in place so the method can still
+        nodeParent.rightChild = secondChild;   // operate properly when fed in incorrect order of 
+        firstChild.rootParent = nodeParent;    // arguments.
         secondChild.rootParent = nodeParent;
     } else{
         firstChild.pathDirection = '1';
@@ -302,10 +302,10 @@ class Tree
         firstChild.rootParent = nodeParent;
         secondChild.rootParent = nodeParent;
     }
-    return nodeParent;
+    return nodeParent;                         // Return Parent node
 }
 // -------------------------------------------------------------
-   public void hoffmanCodeGenerator(){ 
+   public void hoffmanCodeGenerator(){         // Use in order traversal to determine hoffman path
       hoffmanCodes = new HoffmanEncoderStruc();
       traverse(2);
   }
@@ -442,7 +442,7 @@ class Tree
       return successor;
       }
 // -------------------------------------------------------------
-   public void traverse(int traverseType)
+   private void traverse(int traverseType) // only use in order traversal
       {
       
       switch(traverseType)
@@ -470,7 +470,7 @@ class Tree
          }
       }
 // -------------------------------------------------------------
-   private void inOrder(Node localRoot)
+   private void inOrder(Node localRoot) // print each node's character and frequency
       {
       if(localRoot != null)
          {
@@ -478,7 +478,7 @@ class Tree
          System.out.print("(" + localRoot.cData + ": ");
          System.out.print(localRoot.iData + ") ");
          if(localRoot.cData != '-'){
-               determineHoffmanCode(localRoot);
+               determineHoffmanCode(localRoot); // determine path of non '-' nodes
          }
          inOrder(localRoot.rightChild);
          }
@@ -494,7 +494,7 @@ class Tree
          }
       }
 // -------------------------------------------------------------
-   private void determineHoffmanCode(Node localRoot)
+   private void determineHoffmanCode(Node localRoot) // retrace path from root parent
    {
       char hoffmanChar = localRoot.cData;
       String hoffPath = "";
@@ -505,9 +505,9 @@ class Tree
 
       switch(hoffmanChar){
             case 'A':
-                  hoffmanCodes.setACode(hoffPath); break;
+                  hoffmanCodes.setACode(hoffPath); break; // set the hoffman path for A-G
             case 'B':
-                  hoffmanCodes.setBCode(hoffPath); break;
+                  hoffmanCodes.setBCode(hoffPath); break; // will remain null if specific char freq is 0
             case 'C':
                   hoffmanCodes.setCCode(hoffPath); break;
             case 'D':
@@ -521,15 +521,15 @@ class Tree
       }
    }     
 // -------------------------------------------------------------
-public String encodeString(String stringToEncode){
-   StringBuffer hoffEncoded = new StringBuffer();
-   String parser = "";
+public String encodeString(String stringToEncode){ // create new string replacing original
+   StringBuffer hoffEncoded = new StringBuffer();  // A-G condensed string with the Hoffman path
+   String parser = "";                             // encoding
    Scanner reader = new Scanner(stringToEncode);
    reader.useDelimiter("");
    while (reader.hasNext()) {
       parser = reader.next();
       switch(parser){
-            case "A": hoffEncoded.append(hoffmanCodes.getACode()); break;
+            case "A": hoffEncoded.append(hoffmanCodes.getACode()); break; // replace A with A path (ect.)
             case "B": hoffEncoded.append(hoffmanCodes.getBCode()); break;
             case "C": hoffEncoded.append(hoffmanCodes.getCCode()); break;
             case "D": hoffEncoded.append(hoffmanCodes.getDCode()); break;
@@ -542,7 +542,7 @@ public String encodeString(String stringToEncode){
    return hoffEncoded.toString();
 }     
 // -------------------------------------------------------------
-public String decodeHoffmanString(String hoffmanString){
+public String decodeHoffmanString(String hoffmanString){ // A-G deconding from Hoffman encoded string
    StringBuffer hoffDecoded = new StringBuffer();
    Node pathDecoder = root;
    String parser = "";
@@ -552,15 +552,15 @@ public String decodeHoffmanString(String hoffmanString){
    while (reader.hasNext()) {
       parser = reader.next();
       switch(parser){
-            case "0": if(pathDecoder.leftChild.cData != '-'){
-                        hoffDecoded.append(pathDecoder.leftChild.cData);
+            case "0": if(pathDecoder.leftChild.cData != '-'){ // traverse Tree left if 0
+                        hoffDecoded.append(pathDecoder.leftChild.cData); // Add A-G if on leaf
                         pathDecoder = root;
                       } else{
-                        pathDecoder = pathDecoder.leftChild;
+                        pathDecoder = pathDecoder.leftChild; 
                       }
                       break;
-            case "1": if(pathDecoder.rightChild.cData != '-'){
-                        hoffDecoded.append(pathDecoder.rightChild.cData);
+            case "1": if(pathDecoder.rightChild.cData != '-'){ // traverse Tree right if 0
+                        hoffDecoded.append(pathDecoder.rightChild.cData);// Add A-G if on leaf
                         pathDecoder = root;
                       } else{
                         pathDecoder = pathDecoder.rightChild;
@@ -572,7 +572,7 @@ public String decodeHoffmanString(String hoffmanString){
    return hoffDecoded.toString();
 }     
 // -------------------------------------------------------------
-   public void displayTree()
+   public void displayTree() // Display the tree
       {
       Stack globalStack = new Stack();
       globalStack.push(root);
@@ -593,7 +593,7 @@ public String decodeHoffmanString(String hoffmanString){
             Node temp = (Node)globalStack.pop();
             if(temp != null)
                {
-               System.out.print(temp.cData);////////////////////////////////
+               System.out.print(temp.cData);
                localStack.push(temp.leftChild);
                localStack.push(temp.rightChild);
 
