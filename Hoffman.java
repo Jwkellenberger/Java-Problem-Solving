@@ -85,7 +85,7 @@ class HoffmanEncoderStruc // heap node class
    public HoffmanEncoderStruc clone(){ return new HoffmanEncoderStruc(aCode,bCode, cCode, dCode, eCode, fCode, gCode); }
 // -------------------------------------------------------------
    public String toString(){ // display all A-G paths
-      return "\nA: " + aCode + " \n" +
+      return "A: " + aCode + " \n" +
              "B: " + bCode + " \n" +
              "C: " + cCode + " \n" +
              "D: " + dCode + " \n" +
@@ -698,18 +698,26 @@ public class n00624794 {
          while(!assignment.equals("s")){
             switch(assignment){
                case "a":
-                  hoffman.displayTree(); break;
+                  System.out.println("Hoffman Tree:");
+                  hoffman.displayTree();
+                  System.out.println("Press: a: Hoffman Tree, b: CodePath, c: Encoding, d: Decoding, s: Abort"); break;
                case "b":
-                  System.out.print(encodingParser); break;
+                  System.out.println("Hoffman CodePaths:");
+                  System.out.print(encodingParser);
+                  System.out.println("Press: a: Hoffman Tree, b: CodePath, c: Encoding, d: Decoding, s: Abort"); break;
                case "c":
+                  System.out.println("Hoffman Encoded String:");
                   encodingString = hoffman.encodeString(stringAtoG.toString());
                   //System.out.println(encodingString); 
                   encodingString = encodingPrinter(encodingString);
                   System.out.println(encodingString);
+                  System.out.println("Press: a: Hoffman Tree, b: CodePath, c: Encoding, d: Decoding, s: Abort");
                   break;
                case "d":
+                  System.out.println("Hoffman Decoded String:");
                   decodedHoffman = hoffman.decodeHoffmanString(encodingString);
-                  System.out.println(decodedHoffman); break;
+                  System.out.println(decodedHoffman);
+                  System.out.println("Press: a: Hoffman Tree, b: CodePath, c: Encoding, d: Decoding, s: Abort"); break;
             }
             assignment = choiceSelector.next();
          }
