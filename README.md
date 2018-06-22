@@ -43,3 +43,30 @@ G: 1000
 0101010111001001110000110101110010010101111010001110110010111100101011110101001001110111001011100111011111
 ABCDEFGCAFDEBCFAEFBDCFEBCFADEFBFEBFEFBFF
 
+
+
+
+
+
+HASHING DATA:
+1:
+abcd
+bcda
+dabc
+cdab
+aaaa
+
+2:
+salad
+ffjjjkkkky
+abcd
+jadasmith
+cdab
+
+3:
+burger
+abcd
+aaaaaaaaaaaaaaa
+cake
+alphabetsoup
+bcda
