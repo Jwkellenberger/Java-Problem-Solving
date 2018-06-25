@@ -5,6 +5,8 @@
 import java.io.*;
 import java.util.Scanner;
 import java.lang.StringBuffer;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
 ////////////////////////////////////////////////////////////////
 class DataItem
    {                                // (could have more data)
@@ -47,15 +49,23 @@ class HashTable
 // -------------------------------------------------------------
    public void displayTable()
       {
-      System.out.print("Table: ");
+      if(isQuadratic){
+         System.out.print("Quadratic Hash Table: \t[");
+      } else
+      System.out.print("Linear Hash Table: \t\t[");
       for(int j=0; j<arraySize; j++)
          {
+         if(j>0)
+            System.out.print(", ");
          if(hashArray[j] != null)
-            System.out.print(hashArray[j].getKey() + " ");
+            System.out.print(hashArray[j].getKey());
          else
-            System.out.print(j+" ");
+            System.out.print(j);
          }
-      System.out.println("");
+      if(isQuadratic){
+         System.out.println("]\n\n");      
+      } else
+         System.out.println("]");
       }
 // -------------------------------------------------------------
    public int hashFunc(String key)
@@ -100,23 +110,26 @@ class HashTable
       int hashVal = hashFunc(key);  // hash the key
       int probeLength = 0;
       while(hashArray[hashVal] != null)  // until empty cell,
-        {                               // found the key?
-         if(hashArray[hashVal].getKey() == key)
+         {                               // found the key?
+         if(hashArray[hashVal].getKey().equals(key))
             {
             DataItem temp = hashArray[hashVal]; // save item
-            hashArray[hashVal] = nonItem;       // delete item
+            hashArray[hashVal] = nonItem; // delete item
             stringCount--;
-            return probeLength + 1;    // return item
+            return probeLength + 1;       // return item
             }
-         if(isQuadratic){
-             hashVal += 2*probeLength +1;
-         }                          
-         else{++hashVal; }           // go to next cell
-         probeLength++;
+            if(isQuadratic){
+                hashVal += 2*probeLength +1;
+            }                          
+            else{++hashVal; }           // go to next cell
+            probeLength++;                 // go to next cell
          hashVal %= arraySize;      // wraparound if necessary
-        }
-      return -1 * probeLength;                    // can't find item
-      }  // end delete()
+         }
+      if(hashArray[hashVal] == null){
+         return (probeLength+1)*-1;
+      }else
+      return probeLength+1;                    // can't find item
+      }
 // -------------------------------------------------------------
    public int find(String key)    // find item with key
       {
@@ -124,7 +137,7 @@ class HashTable
       int probeLength = 0;
       while(hashArray[hashVal] != null)  // until empty cell,
          {                               // found the key?
-         if(hashArray[hashVal].getKey() == key)
+         if(hashArray[hashVal].getKey().equals(key))
             return probeLength + 1;   // yes, return item
         
             if(isQuadratic){
@@ -134,45 +147,31 @@ class HashTable
             probeLength++;                 // go to next cell
          hashVal %= arraySize;      // wraparound if necessary
          }
-      return probeLength;                    // can't find item
+      if(hashArray[hashVal] == null){
+         return (probeLength+1)*-1;
+      }else
+      return probeLength+1;                    // can't find item
       }
 // -------------------------------------------------------------
    }  // end class HashTable
 ////////////////////////////////////////////////////////////////
-class HashTableApp
+class n00624794
    {
    public static void main(String[] args) throws IOException
     {
     HashTable[] theHashTable = fileStringCountHeapConstructor(args[0]);
 
-    fileStringCountHashTableFindMethod(args[0], theHashTable);
+    fileStringCountHashTableFindMethod(args[1], theHashTable);
+    
+    fileStringCountHashTableDeleteMethod(args[2], theHashTable);
 
     System.out.print("Done: ");
 
     }  // end main()
 //--------------------------------------------------------------
-   public static String getString() throws IOException
-      {
-      InputStreamReader isr = new InputStreamReader(System.in);
-      BufferedReader br = new BufferedReader(isr);
-      String s = br.readLine();
-      return s;
-      }
-//--------------------------------------------------------------
-   public static char getChar() throws IOException
-      {
-      String s = getString();
-      return s.charAt(0);
-      }
-//-------------------------------------------------------------
-   public static int getInt() throws IOException
-      {
-      String s = getString();
-      return Integer.parseInt(s);
-      }
-//--------------------------------------------------------------
     public static HashTable[] fileStringCountHeapConstructor(String filename)
     {
+        methodTitleGenerator("Insert Methods" , "", "=====");
         String content = null;
         File file = new File(filename); // For example, foo.txt
         Scanner reader = null;
@@ -216,9 +215,9 @@ class HashTableApp
             System.out.print(quadraticHashFinalPrint);
             
             hashTables[0].displayTable();
-            System.out.println(hashTables[0].getStringCount());
+            //System.out.println(hashTables[0].getStringCount());
             hashTables[1].displayTable();
-            System.out.println(hashTables[1].getStringCount());
+            //System.out.println(hashTables[1].getStringCount());
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -232,6 +231,7 @@ class HashTableApp
 //--------------------------------------------------------------
     public static void fileStringCountHashTableFindMethod(String filename, HashTable[] hashTables)
     {
+        methodTitleGenerator("Find Methods" , "=============================", "====================================");
         String content = null;
         File file = new File(filename); // For example, foo.txt
         Scanner reader = null;
@@ -284,9 +284,77 @@ class HashTableApp
             System.out.print(quadraticHashFinalPrint);
             
             hashTables[0].displayTable();
-            System.out.println(hashTables[0].getStringCount());
+            //System.out.println(hashTables[0].getStringCount());
             hashTables[1].displayTable();
-            System.out.println(hashTables[1].getStringCount());
+            //System.out.println(hashTables[1].getStringCount());
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if(reader != null){
+                reader.close();
+            }
+        }
+    }
+//--------------------------------------------------------------
+    public static void fileStringCountHashTableDeleteMethod(String filename, HashTable[] hashTables)
+    {
+        methodTitleGenerator("Delete Methods" , "=============================", "==================================");
+        String content = null;
+        File file = new File(filename); // For example, foo.txt
+        Scanner reader = null;
+        String readerString;
+        int heapSize =0;
+        DataItem hashItem = null;
+        int tracker;
+        String linearHashFinalPrint = appendFindOrDeleteData("Linear HashTable Delete:");
+        String quadraticHashFinalPrint = appendFindOrDeleteData("Quadratic HashTable Delete:");
+
+        double linProbeFailCt = 0;
+        double linProbeSuccCt = 0;
+        double linProbeFailSum = 0;
+        double linProbeSuccSum = 0;
+
+        double quadProbeFailCt = 0;
+        double quadProbeSuccCt = 0;
+        double quadProbeFailSum = 0;
+        double quadProbeSuccSum = 0;
+
+        try {
+            reader = new Scanner(file);
+            
+            while(reader.hasNext()){
+                readerString = reader.next();
+                tracker = hashTables[0].delete(readerString);
+                if(tracker < 0){
+                    linProbeFailCt++;
+                    linProbeFailSum += tracker*(-1);
+                }else{
+                    linProbeSuccCt++;
+                    linProbeSuccSum += tracker;
+                }
+                linearHashFinalPrint += appendFindOrDeleteData(tracker, readerString);
+                
+                tracker = hashTables[1].delete(readerString);
+                if(tracker < 0){
+                    quadProbeFailCt++;
+                    quadProbeFailSum += tracker*(-1);
+                }else{
+                    quadProbeSuccCt++;
+                    quadProbeSuccSum += tracker;
+                }
+                quadraticHashFinalPrint += appendFindOrDeleteData(tracker, readerString);
+
+            }
+            linearHashFinalPrint += appendFindOrDeleteAverageProbeLength(linProbeSuccCt, linProbeSuccSum, linProbeFailCt, linProbeFailSum);
+            quadraticHashFinalPrint += appendFindOrDeleteAverageProbeLength(quadProbeSuccCt, quadProbeSuccSum, quadProbeFailCt, quadProbeFailSum);
+            System.out.print(linearHashFinalPrint);
+            System.out.print(quadraticHashFinalPrint);
+            
+            hashTables[0].displayTable();
+            //System.out.println(hashTables[0].getStringCount());
+            hashTables[1].displayTable();
+            //System.out.println(hashTables[1].getStringCount());
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -312,12 +380,17 @@ class HashTableApp
     
 //--------------------------------------------------------------
    public static String appendAverageProbeLength(double count, double sum){
-      return "Average:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" + (sum/count)+"\n\n";
+      NumberFormat nf = new DecimalFormat("###.00");
+      String average = "" + nf.format((sum/count));
+      return "Average:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" + average+"\n\n";
    }  
     
 //--------------------------------------------------------------
     public static String appendFindOrDeleteAverageProbeLength(double succCount, double succSum, double failCount, double failSum){
-        return "Average:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" + (succSum/succCount) + "\t\t\t\t"+ (failSum/failCount) +"\n\n";
+        NumberFormat nf = new DecimalFormat("###.00");
+        String succAverage = "" + nf.format((succSum/succCount));
+        String failAverage = "" + nf.format((failSum/failCount));
+        return "Average:\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t" + succAverage + "\t\t\t"+ failAverage +"\n\n";
     }  
   
 //--------------------------------------------------------------
@@ -326,9 +399,16 @@ class HashTableApp
     }  
   
 //--------------------------------------------------------------
+    public static void methodTitleGenerator(String methodTitle, String surroundingBorder, String methodBorder){
+        System.out.println("====================================================================" + surroundingBorder);
+        System.out.println("=================  " + methodTitle + "  ============================" + methodBorder);
+        System.out.println("====================================================================" + surroundingBorder);
+    }  
+  
+//--------------------------------------------------------------
     public static String appendFindOrDeleteData(int insertData, String key){
         boolean successfulFoD = true;
-        String successOrFailString = "Success\t\t\t\t";
+        String successOrFailString = " Success\t\t\t\t";
         String probeString = "" + insertData;
 
         StringBuffer sbSpace = new StringBuffer();
@@ -342,7 +422,7 @@ class HashTableApp
         }
 
         if(!successfulFoD){
-            successOrFailString = "\t\t\t\tFail";
+            successOrFailString = "\t\t\t\tFail\t";
         }
 
 
