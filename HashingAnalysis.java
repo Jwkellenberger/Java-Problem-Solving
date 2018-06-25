@@ -1,7 +1,7 @@
 // Assignment 6
 // hash.java
 // demonstrates hash table with linear probing
-// to run this program: C:>java HashTableApp
+
 import java.io.*;
 import java.util.Scanner;
 import java.lang.StringBuffer;
