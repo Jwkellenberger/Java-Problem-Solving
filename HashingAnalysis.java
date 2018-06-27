@@ -76,6 +76,7 @@ class HashTable
            hash %= arraySize;
         }
         //System.out.println(key + " " + hash);
+        hash %= arraySize;
         return hash;
       //return 0 % arraySize;       // hash function
       }
